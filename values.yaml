@@ -1,0 +1,44 @@
+replicaCount: 1
+image:
+  repository: nginx
+  tag: latest
+  pullPolicy: IfNotPresent
+ports:
+- name: http
+  containerPort: 80
+  protocol: TCP
+
+service:
+  port: 80
+
+ingress:
+  enabled: true
+  className: matas-ingress-class
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  tls:
+  - hosts:
+    - nginx.local.com
+  hosts:
+  - host: nginx.local.com
+    paths:
+    - path: /
+      pathType: Prefix
+
+secret:
+  enabled: true
+  type: kubernetes.io/tls
+  data:
+    tls.crt: |
+      -----BEGIN CERTIFICATE-----
+      ...insert your .pem values...
+      -----END CERTIFICATE-----
+    tls.key: |
+      -----BEGIN PRIVATE KEY-----
+      ...insert your .pem values...
+      -----END PRIVATE KEY-----
+
+ingressClass:
+  enabled: true
+  name: "matas-ingress-class"
+  controller: k8s.io/ingress-nginx
