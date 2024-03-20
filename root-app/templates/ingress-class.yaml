@@ -1,0 +1,20 @@
+{{- if .Values.ingressClass.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: {{ .Values.ingressClass.name | default "matas-ingress-class" }}
+  {{- with .Values.ingressClass.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  controller: {{ .Values.ingressClass.controller }}
+  {{- if .Values.ingressClass.parameters }}
+  parameters:
+    {{- if .Values.ingressClass.parameters.apiGroup }}
+    apiGroup: {{ .Values.ingressClass.parameters.apiGroup }}
+    {{- end }}
+    kind: {{ .Values.ingressClass.parameters.kind }}
+    name: {{ .Values.ingressClass.parameters.name }}
+  {{- end }}
+{{- end }}
